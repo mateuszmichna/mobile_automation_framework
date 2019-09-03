@@ -32,7 +32,9 @@ class BaseTestCaseSet(unittest.TestCase):
         """Put here functions that you want to run before every test case"""
 
     def test_first(self):
+        test_name = 'First test'
         self.adp.tap_views()
+        self.bp.get_screenshot(test_name)
         self.bp.go_back()
         self.adp.tap_views()
         self.bp.swipe_up_wda()
@@ -40,14 +42,19 @@ class BaseTestCaseSet(unittest.TestCase):
         self.bp.swipe_up_wda()
         self.adp.tap_Text_Fields()
         self.adp.tap_txt_field()
+        self.bp.get_screenshot(test_name)
         self.adp.send_keys_to_txt_field('test test test')
+        self.bp.get_screenshot(test_name)
         self.bp.wait(3)
         self.adp.clear_txt_field()
+        self.bp.get_screenshot(test_name)
         self.bp.wait(3)
 
     def test_second(self):
+        test_name = 'Second test'
         self.adp.set_screen_orientation('PORTRAIT')
         self.adp.set_screen_orientation('LANDSCAPE')
+        self.bp.get_screenshot(test_name)
         self.bp.wait(3)
         self.bp.print_screen_orientation()
         self.bp.wait(3)
