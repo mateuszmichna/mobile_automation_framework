@@ -5,6 +5,7 @@ import time
 from appium.webdriver import WebElement
 from appium.webdriver.common.touch_action import TouchAction
 from appium.webdriver.webdriver import WebDriver
+from selenium.webdriver import TouchActions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -293,6 +294,10 @@ class BasePage(object):
                                 to_y=swipe_stop)
 
     """Swipes - UIAutomator 2 driver"""
+
+    def flick_wda(self):
+        tc = TouchActions(self.driver).flick(None, 50)
+        tc.perform()
 
     def swipe_wda(self, from_x: float or int, from_y: float or int, duration_of_press: float or int,
                   to_x: float or int, to_y: float or int):
