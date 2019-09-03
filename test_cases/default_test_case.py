@@ -7,20 +7,29 @@ from settings.session_settings import start_session, end_session
 
 class BaseTestCaseSet(unittest.TestCase):
 
-    """Put here functions that should be run before full set of test cases and initialization of classes """
+    bp = None
+    driver = None
 
-    driver = start_session()
-    bp = BasePage(driver=driver)
-    adp = ApiDemosPage(driver=driver)
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        """Here are functions that are run before all tests (ex. initialization of driver and BasePage """
+
+        cls.driver = start_session()
+        cls.bp = BasePage(driver=cls.driver)
+        cls.bp.print_screen_size()
+        cls.bp.print_screen_orientation()
+
+        """Put here initialization of other classes/pages """
+
+        cls.adp = ApiDemosPage(driver=cls.driver)
 
     def setUp(self):
         super().setUp()
+        print('\nStarting new test case\n')
 
         """Put here functions that you want to run before every test case"""
-
-        self.bp.print_screen_size()
-        self.bp.print_screen_orientation()
-        self.bp.reset_app()
 
     def test_first(self):
         self.adp.tap_views()
@@ -43,10 +52,13 @@ class BaseTestCaseSet(unittest.TestCase):
         self.bp.print_screen_orientation()
         self.bp.wait(3)
 
-    def test_this_is_always_last_test_case_in_set(self):
-        self.bp.close_app()
-        end_session(self.driver)
-
     def tearDown(self):
         super().tearDown()
+        self.bp.reset_app()
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        cls.bp.close_app()
+        end_session(cls.driver)
 

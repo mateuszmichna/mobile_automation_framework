@@ -28,17 +28,17 @@ class BasePage(object):
 
     def go_back(self):
         self.driver.back()
-        print('Went to previous screen')
+        print('\nWent to previous screen')
 
     @staticmethod
     def wait(timer: int = 0):
-        print('Waiting...')
+        print('\nWaiting...')
         time.sleep(timer)
-        print('Waiting end')
+        print('\nWaiting end')
 
     def close_app(self):
         self.driver.close_app()
-        print('App closed')
+        print('\nApp closed')
 
     def reset_app(self):
         self.driver.reset()
@@ -50,17 +50,17 @@ class BasePage(object):
         return orientation
 
     def print_screen_orientation(self):
-        statement = f'Screen orientation is: \n {self.orientation}'
+        statement = f'\nScreen orientation is: \n {self.orientation}'
         print(statement)
         return self.orientation
 
     def set_screen_orientation(self, desired_orientation: str = 'LANDSCAPE' or 'PORTRAIT'):
         current_orientation = self.orientation
         if desired_orientation == current_orientation:
-            print(f'There is no need to set same orientation')
+            print(f'\nThere is no need to set same orientation')
         else:
             self.driver.orientation = desired_orientation
-            print(f'Screen orientation changed to {desired_orientation}')
+            print(f'\nScreen orientation changed to {desired_orientation}')
 
     def get_screen_size(self):
         width = 0
@@ -71,11 +71,11 @@ class BasePage(object):
             width = size.get('width')
             height = size.get('height')
             counter += 1
-        assert width > 0 and height > 0, "Driver can't get screen size, framework can't work properly. Please rerun."
+        assert width > 0 and height > 0, "\nDriver can't get screen size, framework can't work properly. Please rerun."
         return width, height
 
     def print_screen_size(self):
-        statement = f'Screen size is: \n' \
+        statement = f'\nScreen size is: \n' \
             f'width: {self.width}\n' \
             f'height: {self.height}\n'
         print(statement)
@@ -127,11 +127,11 @@ class BasePage(object):
 
         if x is None and y is None:
             x, y = self.get_random_position_within_element(element, offset)
-            statement = f'Tapped at: \n width: {x} \n height: {y} \n within the element\n'
+            statement = f'\nTapped at: \n width: {x} \n height: {y} \n within the element'
 
         else:
             assert x and y, 'You should set x and y'
-            statement = f'Tapped at: \n width: {x} \n height: {y} \n relative to element position\n'
+            statement = f'\nTapped at: \n width: {x} \n height: {y} \n relative to element position'
 
         params = {'element': element.id,
                   'x': x,
@@ -149,7 +149,7 @@ class BasePage(object):
 
         params = {'x': x,
                   'y': y}
-        statement = f'Tapped at: \n width: {x} \n height: {y} \n relative to screen borders\n'
+        statement = f'\nTapped at: \n width: {x} \n height: {y} \n relative to screen borders'
         self.driver.execute_script('mobile: tap', params)
         return print(statement)
 
@@ -165,11 +165,11 @@ class BasePage(object):
         tc = TouchAction(self.driver)
         if x is None and y is None:
             tc.tap(element)
-            statement = f'Tapped at element'
+            statement = f'\nTapped at element'
         else:
             assert x and y, 'You should set x and y'
             tc.tap(x=x, y=y)
-            statement = f'Tapped at: \n width: {x} \n height: {y} \n relative to screen borders\n'
+            statement = f'\nTapped at: \n width: {x} \n height: {y} \n relative to screen borders'
         tc.perform()
         print(statement)
         return tc
@@ -181,11 +181,11 @@ class BasePage(object):
         tc = TouchAction(self.driver)
         if x is None and y is None:
             tc.press(element)
-            statement = f'Pressed an element'
+            statement = f'\nPressed an element'
         else:
             assert x and y, 'You should set x and y'
             tc.press(x=x, y=y)
-            statement = f'Pressed at: \n width: {x} \n height: {y} \n relative to screen borders\n'
+            statement = f'\nPressed at: \n width: {x} \n height: {y} \n relative to screen borders'
         tc.perform()
         print(statement)
         return tc
@@ -200,7 +200,7 @@ class BasePage(object):
         """
 
         self.driver.execute_script('mobile: swipe', {'direction': direction})
-        statement = f'Swiped {direction} shortly'
+        statement = f'\nSwiped {direction} shortly'
         return print(statement)
 
     def flick_right_xcuit(self):
@@ -228,7 +228,7 @@ class BasePage(object):
                   'fromY': from_y,
                   'toX': to_x,
                   'toY': to_y}
-        statement = f'Swiping from {from_x}, {from_y} to {to_x}, {to_y}.\n'
+        statement = f'\nSwiping from {from_x}, {from_y} to {to_x}, {to_y}.'
         print(statement)
         return self.driver.execute_script('mobile: dragFromToForDuration', params), print('Swiped\n')
 
@@ -308,7 +308,7 @@ class BasePage(object):
             .move_to(el=None, x=to_x, y=to_y) \
             .wait(500) \
             .release()
-        statement = f'Swiping from {from_x}, {from_y} to {to_x}, {to_y}.\n'
+        statement = f'\nSwiping from {from_x}, {from_y} to {to_x}, {to_y}.'
         print(statement)
         return swipe.perform()
 
@@ -370,7 +370,7 @@ class BasePage(object):
         else:
             element = self.find_element_by_xpath(selector)
         element.send_keys(keys)
-        print(f'Sent {keys} to the element')
+        print(f'\nSent: \n{keys} \nto the element')
         return element
 
     def clear_field_wda(self, selector: str, method='access_id' or 'xpath'):
@@ -379,5 +379,5 @@ class BasePage(object):
         else:
             element = self.find_element_by_xpath(selector)
         element.clear()
-        print('Element cleared')
+        print('\nElement cleared')
         return element
