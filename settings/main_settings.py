@@ -24,10 +24,10 @@ IOS_DRIVER = "XCUITest" # which automation engine to use (XCUITest for iOS)
 ANDROID_DRIVER = 'UiAutomator2' # which automation engine to use (UiAutomator2 for Android)
 
 """Both"""
-PLATFORM = "Android"  # platform of device
-DEVICE = "samsung SM-G950F"  # name of the device
-APP_PATH = "C:\\Users\\ASUS\\Downloads\\ApiDemos-debug.apk"  # the absolute local path or remote http URL to a .ipa file (IOS), .app folder (IOS Simulator)
-SYSTEM_VERSION = "9"  # device system version
+PLATFORM = ""  # platform of device
+DEVICE = ""  # name of the device
+APP_PATH = ""  # the absolute local path or remote http URL to a .ipa file (IOS), .app folder (IOS Simulator)
+SYSTEM_VERSION = ""  # device system version
 NO_RESET = ""  # if False then after session start app will be reinstalled
 WAIT_FOR_COMMAND = ""  # in sec, after this time with no command, session terminates
 WAIT_FOR_QUIESCENCE = ''  # when False skips UI tests and speeds up building app
@@ -56,5 +56,5 @@ ANDROID_CAPABILITIES = {
    "automationName": ANDROID_DRIVER
 }
 
-DESIRED_CAPABILITIES = ANDROID_CAPABILITIES   # by deafult, could be also IOS_CAPABILITIES
+DESIRED_CAPABILITIES = None   # None by default - should be ANDROID_CAPABILITIES or IOS_CAPABILITIES
 

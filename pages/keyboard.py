@@ -2,6 +2,9 @@ from pages.base_page import BasePage
 
 
 class KeyboardPage(BasePage):
+
+    """This page is iOS numeric keyboard handler"""
+
     """Selectors with possible actions"""
 
     one_keyboard_button = ''  # accessibility id; tap
