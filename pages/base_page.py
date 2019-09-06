@@ -364,20 +364,14 @@ class BasePage(object):
 
     """Fields functions"""
 
-    def send_keys_wda(self, keys: str, selector: str, method='access_id' or 'xpath'):
-        if method == 'access_id':
-            element = self.find_element_by_access_id(selector)
-        else:
-            element = self.find_element_by_xpath(selector)
+    @staticmethod
+    def send_keys_wda(keys: str, element: WebElement):
         element.send_keys(keys)
         print(f'\nSent: \n{keys} \nto the element')
         return element
 
-    def clear_field_wda(self, selector: str, method='access_id' or 'xpath'):
-        if method == 'access_id':
-            element = self.find_element_by_access_id(selector)
-        else:
-            element = self.find_element_by_xpath(selector)
+    @staticmethod
+    def clear_field_wda(element: WebElement):
         element.clear()
         print('\nElement cleared')
         return element
