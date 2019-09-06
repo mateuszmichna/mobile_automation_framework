@@ -5,19 +5,19 @@ from settings.session_settings import start_session, end_session
 
 
 class BaseTestCaseSet(unittest.TestCase):
-    bp = None
+    basepage = None
     driver = None
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
 
-        """Here are functions that are run before all tests (ex. initialization of driver and BasePage """
+        """Here are functions that are run before all tests in this class (ex. initialization of driver and BasePage """
 
         cls.driver = start_session()
-        cls.bp = BasePage(driver=cls.driver)
-        cls.bp.print_screen_size()
-        cls.bp.print_screen_orientation()
+        cls.basepage = BasePage(driver=cls.driver)
+        cls.basepage.print_screen_size()
+        cls.basepage.print_screen_orientation()
 
         """Put here initialization of other classes/pages """
 
@@ -33,10 +33,10 @@ class BaseTestCaseSet(unittest.TestCase):
 
     def tearDown(self):
         super().tearDown()
-        self.bp.reset_app()
+        self.basepage.reset_app()
 
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()
-        cls.bp.close_app()
+        cls.basepage.close_app()
         end_session(cls.driver)
