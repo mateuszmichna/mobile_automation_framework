@@ -294,73 +294,76 @@ class BasePage(object):
 
     """Swipes - UIAutomator 2 driver"""
 
-    def swipe_wda(self, from_x: float or int, from_y: float or int, duration_of_press: float or int,
-                  to_x: float or int, to_y: float or int):
+    def swipe_wda(self, from_x: float or int, from_y: float or int,
+                  to_x: float or int, to_y: float or int, wait: bool = False):
 
         """
-        This method should be used if methods above don't work. Contains waits after
+        It may contain waits after
         every action, because sometimes Appium read chain of actions separately instead as a action chain.
         WebDriver method, could be used in iOS and Android app
         """
-
-        swipe = TouchAction(driver=self.driver).long_press(el=None, x=from_x, y=from_y, duration=duration_of_press) \
-            .wait(500) \
-            .move_to(el=None, x=to_x, y=to_y) \
-            .wait(500) \
-            .release()
+        if wait is True:
+            duration_of_press = 500
+            swipe = TouchAction(driver=self.driver).long_press(el=None, x=from_x, y=from_y, duration=duration_of_press) \
+                .wait(500) \
+                .move_to(el=None, x=to_x, y=to_y) \
+                .wait(500) \
+                .release()
+        else:
+            duration_of_press = 1
+            swipe = TouchAction(driver=self.driver).long_press(el=None, x=from_x, y=from_y, duration=duration_of_press) \
+                .move_to(el=None, x=to_x, y=to_y) \
+                .release()
         statement = f'\nSwiping from {from_x}, {from_y} to {to_x}, {to_y}.'
         print(statement)
         return swipe.perform()
 
-    def swipe_right_wda(self):
-        swipe_start = self.left_border + 1
-        swipe_stop = self.right_border
-        swipe_height = self.height * 0.5
-        return self.swipe_wda(duration_of_press=1000,
-                              from_x=swipe_start,
-                              from_y=swipe_height,
-                              to_x=swipe_stop,
-                              to_y=swipe_height)
+    def get_swipe_coordinates(self, direction: str = 'up' or 'down' or 'right' or 'left', with_menu: bool = False):
+        y_start = 0
+        y_stop = 0
+        x_start = 0
+        x_stop = 0
+        if with_menu is False:
+            if direction == 'right':
+                x_start = self.left_border + 1
+                x_stop = self.right_border
+                y_start = self.height * 0.5
+                y_stop = y_start
+            elif direction == 'left':
+                x_start = self.right_border - 1
+                x_stop = self.left_border
+                y_start = self.height * 0.5
+                y_stop = y_start
+            elif direction == 'up':
+                x_start = self.width * 0.5
+                x_stop = x_start
+                y_start = self.bottom_border * 0.9
+                y_stop = self.upper_border
+            elif direction == 'down':
+                x_start = self.width * 0.5
+                x_stop = x_start
+                y_start = self.upper_border * 0.37
+                y_stop = self.bottom_border
+        else:
+            x_start = self.width * 0.5
+            x_stop = x_start
+            y_start = self.upper_border
+            y_stop = self.bottom_border
 
-    def swipe_left_wda(self):
-        swipe_start = self.right_border - 1
-        swipe_stop = self.left_border
-        swipe_height = self.height * 0.5
-        return self.swipe_wda(duration_of_press=1000,
-                              from_x=swipe_start,
-                              from_y=swipe_height,
-                              to_x=swipe_stop,
-                              to_y=swipe_height)
+        coordinates = {'from_x': x_start,
+                       'from_y': y_start,
+                       'to_x': x_stop,
+                       'to_y': y_stop}
 
-    def swipe_up_wda(self):
-        swipe_start = self.bottom_border * 0.98
-        swipe_stop = self.upper_border
-        swipe_width = self.width * 0.5
-        return self.swipe_wda(duration_of_press=1000,
-                              from_x=swipe_width,
-                              from_y=swipe_start,
-                              to_x=swipe_width,
-                              to_y=swipe_stop)
+        return coordinates
 
-    def swipe_down_wda(self):
-        swipe_start = self.upper_border * 0.37
-        swipe_stop = self.bottom_border
-        swipe_width = self.width * 0.5
-        return self.swipe_wda(duration_of_press=1000,
-                              from_x=swipe_width,
-                              from_y=swipe_start,
-                              to_x=swipe_width,
-                              to_y=swipe_stop)
-
-    def swipe_down_with_with_menu_bar_wda(self):
-        swipe_start = self.upper_border
-        swipe_stop = self.bottom_border
-        swipe_width = self.width * 0.5
-        return self.swipe_wda(duration_of_press=1000,
-                              from_x=swipe_width,
-                              from_y=swipe_start,
-                              to_x=swipe_width,
-                              to_y=swipe_stop)
+    def swipe_to(self, direction: str = 'up' or 'down' or 'right' or 'left', with_menu: bool = False, wait: bool = False):
+        coordinates = self.get_swipe_coordinates(direction=direction, with_menu=with_menu)
+        return self.swipe_wda(from_x=coordinates['from_x'],
+                              to_x=coordinates['to_x'],
+                              from_y=coordinates['from_y'],
+                              to_y=coordinates['to_y'],
+                              wait=wait)
 
     """Fields functions"""
 
