@@ -16,7 +16,7 @@ class BasePage(object):
 
     def __init__(self, driver: WebDriver):
         self.driver = driver
-        self.orientation = self.get_screen_orientation()
+        self.orientation = self._get_screen_orientation()
         self.size = self.get_screen_size()
         self.width, self.height = self.size
         self.right_border = self.width
@@ -42,10 +42,11 @@ class BasePage(object):
 
     def reset_app(self):
         self.driver.reset()
+        print('\nApp reset')
 
     """Screen options"""
 
-    def get_screen_orientation(self):
+    def _get_screen_orientation(self):
         orientation = self.driver.orientation
         return orientation
 
@@ -81,15 +82,33 @@ class BasePage(object):
         print(statement)
         return self.width, self.height
 
-    def get_screenshot(self, test_name: str):
+    def _get_path_to_saved_file(self, test_name: str, directory: str = 'screenshots' or 'recordings'):
         number = 0
         filename = f'{test_name.lower() + str(number)}.png'
-        file_path = f'{ROOT_DIR_FORWARD_SLASH_SEPARATOR}/screenshots/{filename}'
+        file_path = f'{ROOT_DIR_FORWARD_SLASH_SEPARATOR}/{directory}/{filename}'
         while os.path.exists(file_path) is True:
             number = number + 1
             filename = f'{test_name.lower() + str(number)}.png'
-            file_path = f'{ROOT_DIR_FORWARD_SLASH_SEPARATOR}/screenshots/{filename}'
+            file_path = f'{ROOT_DIR_FORWARD_SLASH_SEPARATOR}/{directory}/{filename}'
+        return file_path
+
+    def get_screenshot(self, test_name: str):
+        file_path = self._get_path_to_saved_file(test_name=test_name, directory='screenshots')
         return self.driver.get_screenshot_as_file(file_path)
+
+    def start_screen_recording(self, test_name: str):
+        file_path = self._get_path_to_saved_file(test_name=test_name, directory='recordings')
+        return self.driver.start_recording_screen()
+
+    # def get_screenshot(self, test_name: str):
+    #     number = 0
+    #     filename = f'{test_name.lower() + str(number)}.png'
+    #     file_path = f'{ROOT_DIR_FORWARD_SLASH_SEPARATOR}/screenshots/{filename}'
+    #     while os.path.exists(file_path) is True:
+    #         number = number + 1
+    #         filename = f'{test_name.lower() + str(number)}.png'
+    #         file_path = f'{ROOT_DIR_FORWARD_SLASH_SEPARATOR}/screenshots/{filename}'
+    #     return self.driver.get_screenshot_as_file(file_path)
 
     """Find Element"""
 
@@ -104,7 +123,7 @@ class BasePage(object):
     """Tapping elements functions"""
 
     @staticmethod
-    def get_random_position_within_element(element, offset: int = 0):
+    def _get_random_position_within_element(element, offset: int = 0):
         element_size = element.size
         width = element_size.get('width', 0)
         height = element_size.get('height', 0)
@@ -126,7 +145,7 @@ class BasePage(object):
         """
 
         if x is None and y is None:
-            x, y = self.get_random_position_within_element(element, offset)
+            x, y = self._get_random_position_within_element(element, offset)
             statement = f'\nTapped at: \n width: {x} \n height: {y} \n within the element'
 
         else:
@@ -192,7 +211,7 @@ class BasePage(object):
 
     """Swipes - XCUIT driver"""
 
-    def flick_xcuit(self, direction: str):
+    def _flick_xcuit(self, direction: str):
 
         """
         This method simulates short movement of finger (flick)
@@ -203,17 +222,16 @@ class BasePage(object):
         statement = f'\nSwiped {direction} shortly'
         return print(statement)
 
-    def flick_right_xcuit(self):
-        return self.flick_xcuit('right')
+    def flick_to_xcuit(self, direction: str = 'left' or 'right' or 'up' or 'down'):
+        if direction == 'left':
+            self._flick_xcuit('left')
+        elif direction == 'right':
+            self._flick_xcuit('right')
+        elif direction == 'up':
+            self._flick_xcuit('up')
+        elif direction == 'down':
+            self._flick_xcuit('down')
 
-    def flick_left_xcuit(self):
-        return self.flick_xcuit('left')
-
-    def flick_up_xcuit(self):
-        return self.flick_xcuit('up')
-
-    def flick_down_xcuit(self):
-        return self.flick_xcuit('down')
 
     def swipe_xcuit(self, duration: float or int, from_x: float or int,
                     from_y: float or int, to_x: float or int, to_y: float or int):
@@ -294,15 +312,15 @@ class BasePage(object):
 
     """Swipes - UIAutomator 2 driver"""
 
-    def swipe_wda(self, from_x: float or int, from_y: float or int,
-                  to_x: float or int, to_y: float or int, wait: bool = False):
+    def _swipe_wda(self, from_x: float or int, from_y: float or int,
+                   to_x: float or int, to_y: float or int, wait: bool = False):
 
         """
         It may contain waits after
         every action, because sometimes Appium read chain of actions separately instead as a action chain.
         WebDriver method, could be used in iOS and Android app
         """
-        if wait is True:
+        if wait:
             duration_of_press = 500
             swipe = TouchAction(driver=self.driver).long_press(el=None, x=from_x, y=from_y, duration=duration_of_press) \
                 .wait(500) \
@@ -310,27 +328,33 @@ class BasePage(object):
                 .wait(500) \
                 .release()
         else:
-            duration_of_press = 1
-            swipe = TouchAction(driver=self.driver).long_press(el=None, x=from_x, y=from_y, duration=duration_of_press) \
+            swipe = TouchAction(driver=self.driver).press(el=None, x=from_x, y=from_y) \
                 .move_to(el=None, x=to_x, y=to_y) \
                 .release()
         statement = f'\nSwiping from {from_x}, {from_y} to {to_x}, {to_y}.'
         print(statement)
         return swipe.perform()
 
-    def get_swipe_coordinates(self, direction: str = 'up' or 'down' or 'right' or 'left', with_menu: bool = False):
+    def _get_swipe_coordinates(self, direction: str = 'up' or 'down' or 'right' or 'left', with_menu: bool = False):
         y_start = 0
         y_stop = 0
         x_start = 0
         x_stop = 0
-        if with_menu is False:
+
+        if with_menu:
+            x_start = self.width * 0.5
+            x_stop = x_start
+            y_start = self.upper_border
+            y_stop = self.bottom_border
+
+        else:
             if direction == 'right':
-                x_start = self.left_border + 1
+                x_start = self.right_border * 0.2
                 x_stop = self.right_border
                 y_start = self.height * 0.5
                 y_stop = y_start
             elif direction == 'left':
-                x_start = self.right_border - 1
+                x_start = self.right_border * 0.8
                 x_stop = self.left_border
                 y_start = self.height * 0.5
                 y_stop = y_start
@@ -342,13 +366,8 @@ class BasePage(object):
             elif direction == 'down':
                 x_start = self.width * 0.5
                 x_stop = x_start
-                y_start = self.upper_border * 0.37
+                y_start = self.bottom_border * 0.2
                 y_stop = self.bottom_border
-        else:
-            x_start = self.width * 0.5
-            x_stop = x_start
-            y_start = self.upper_border
-            y_stop = self.bottom_border
 
         coordinates = {'from_x': x_start,
                        'from_y': y_start,
@@ -357,13 +376,14 @@ class BasePage(object):
 
         return coordinates
 
-    def swipe_to(self, direction: str = 'up' or 'down' or 'right' or 'left', with_menu: bool = False, wait: bool = False):
-        coordinates = self.get_swipe_coordinates(direction=direction, with_menu=with_menu)
-        return self.swipe_wda(from_x=coordinates['from_x'],
-                              to_x=coordinates['to_x'],
-                              from_y=coordinates['from_y'],
-                              to_y=coordinates['to_y'],
-                              wait=wait)
+    def swipe_to_wda(self, direction: str = 'up' or 'down' or 'right' or 'left', with_menu: bool = False,
+                     wait: bool = False):
+        coordinates = self._get_swipe_coordinates(direction=direction, with_menu=with_menu)
+        return self._swipe_wda(from_x=coordinates['from_x'],
+                               to_x=coordinates['to_x'],
+                               from_y=coordinates['from_y'],
+                               to_y=coordinates['to_y'],
+                               wait=wait)
 
     """Fields functions"""
 
