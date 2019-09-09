@@ -87,7 +87,7 @@ class BasePage(object):
         number = 0
         filename = f'{test_name.lower() + str(number)}.png'
         file_path = f'{ROOT_DIR_FORWARD_SLASH_SEPARATOR}/screenshots/{filename}'
-        while os.path.exists(file_path) is True:
+        while os.path.exists(file_path):
             number = number + 1
             filename = f'{test_name.lower() + str(number)}.png'
             file_path = f'{ROOT_DIR_FORWARD_SLASH_SEPARATOR}/screenshots/{filename}'
@@ -320,6 +320,13 @@ class BasePage(object):
                                from_y=coordinates['from_y'],
                                to_y=coordinates['to_y'],
                                wait=wait)
+
+    """Drag and drop funtions"""
+
+    def drag_and_drop(self, element_1: WebElement, to_x: int, to_y: int):
+        drag_and_drop = TouchAction(driver=self.driver)
+        drag_and_drop.long_press(el=element_1, duration=1000) \
+            .move_to(el=None, x=to_x, y=to_y).release()
 
     """Fields functions"""
 
