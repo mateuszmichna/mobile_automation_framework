@@ -82,33 +82,20 @@ class BasePage(object):
         print(statement)
         return self.width, self.height
 
-    def _get_path_to_saved_file(self, test_name: str, directory: str = 'screenshots' or 'recordings'):
+    @staticmethod
+    def _get_path_to_saved_file(test_name: str):
         number = 0
         filename = f'{test_name.lower() + str(number)}.png'
-        file_path = f'{ROOT_DIR_FORWARD_SLASH_SEPARATOR}/{directory}/{filename}'
+        file_path = f'{ROOT_DIR_FORWARD_SLASH_SEPARATOR}/screenshots/{filename}'
         while os.path.exists(file_path) is True:
             number = number + 1
             filename = f'{test_name.lower() + str(number)}.png'
-            file_path = f'{ROOT_DIR_FORWARD_SLASH_SEPARATOR}/{directory}/{filename}'
+            file_path = f'{ROOT_DIR_FORWARD_SLASH_SEPARATOR}/screenshots/{filename}'
         return file_path
 
     def get_screenshot(self, test_name: str):
-        file_path = self._get_path_to_saved_file(test_name=test_name, directory='screenshots')
+        file_path = self._get_path_to_saved_file(test_name=test_name)
         return self.driver.get_screenshot_as_file(file_path)
-
-    def start_screen_recording(self, test_name: str):
-        file_path = self._get_path_to_saved_file(test_name=test_name, directory='recordings')
-        return self.driver.start_recording_screen()
-
-    # def get_screenshot(self, test_name: str):
-    #     number = 0
-    #     filename = f'{test_name.lower() + str(number)}.png'
-    #     file_path = f'{ROOT_DIR_FORWARD_SLASH_SEPARATOR}/screenshots/{filename}'
-    #     while os.path.exists(file_path) is True:
-    #         number = number + 1
-    #         filename = f'{test_name.lower() + str(number)}.png'
-    #         file_path = f'{ROOT_DIR_FORWARD_SLASH_SEPARATOR}/screenshots/{filename}'
-    #     return self.driver.get_screenshot_as_file(file_path)
 
     """Find Element"""
 
@@ -231,7 +218,6 @@ class BasePage(object):
             self._flick_xcuit('up')
         elif direction == 'down':
             self._flick_xcuit('down')
-
 
     def swipe_xcuit(self, duration: float or int, from_x: float or int,
                     from_y: float or int, to_x: float or int, to_y: float or int):
