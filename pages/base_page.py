@@ -87,7 +87,7 @@ class BasePage(object):
         number = 0
         filename = f'{test_name.lower() + str(number)}.png'
         file_path = f'{ROOT_DIR_FORWARD_SLASH_SEPARATOR}/screenshots/{filename}'
-        while os.path.exists(file_path) is True:
+        while os.path.exists(file_path):
             number = number + 1
             filename = f'{test_name.lower() + str(number)}.png'
             file_path = f'{ROOT_DIR_FORWARD_SLASH_SEPARATOR}/screenshots/{filename}'
