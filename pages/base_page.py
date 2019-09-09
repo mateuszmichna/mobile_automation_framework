@@ -321,6 +321,13 @@ class BasePage(object):
                                to_y=coordinates['to_y'],
                                wait=wait)
 
+    """Drag and drop funtions"""
+
+    def drag_and_drop(self, element_1: WebElement, to_x: int, to_y: int):
+        drag_and_drop = TouchAction(driver=self.driver)
+        drag_and_drop.long_press(el=element_1, duration=1000) \
+            .move_to(el=None, x=to_x, y=to_y).release()
+
     """Fields functions"""
 
     @staticmethod
