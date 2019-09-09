@@ -17,7 +17,7 @@ class BasePage(object):
     def __init__(self, driver: WebDriver):
         self.driver = driver
         self.orientation = self._get_screen_orientation()
-        self.size = self.get_screen_size()
+        self.size = self._get_screen_size()
         self.width, self.height = self.size
         self.right_border = self.width
         self.left_border = 0
@@ -63,7 +63,7 @@ class BasePage(object):
             self.driver.orientation = desired_orientation
             print(f'\nScreen orientation changed to {desired_orientation}')
 
-    def get_screen_size(self):
+    def _get_screen_size(self):
         width = 0
         height = 0
         counter = 1
@@ -77,8 +77,8 @@ class BasePage(object):
 
     def print_screen_size(self):
         statement = f'\nScreen size is: \n' \
-            f'width: {self.width}\n' \
-            f'height: {self.height}\n'
+                    f'width: {self.width}\n' \
+                    f'height: {self.height}\n'
         print(statement)
         return self.width, self.height
 
@@ -196,130 +196,7 @@ class BasePage(object):
         print(statement)
         return tc
 
-    """Swipes - XCUIT driver"""
-
-    def _flick_xcuit(self, direction: str):
-
-        """
-        This method simulates short movement of finger (flick)
-        XCUITest core method - use when developing iOS app
-        """
-
-        self.driver.execute_script('mobile: swipe', {'direction': direction})
-        statement = f'\nSwiped {direction} shortly'
-        return print(statement)
-
-    def flick_to_xcuit(self, direction: str = 'left' or 'right' or 'up' or 'down'):
-        if direction == 'left':
-            self._flick_xcuit('left')
-        elif direction == 'right':
-            self._flick_xcuit('right')
-        elif direction == 'up':
-            self._flick_xcuit('up')
-        elif direction == 'down':
-            self._flick_xcuit('down')
-
-    def swipe_xcuit(self, duration: float or int, from_x: float or int,
-                    from_y: float or int, to_x: float or int, to_y: float or int):
-
-        """
-        This method simulates long move (drag) of the finger
-        XCUITest core method - use when developing iOS app
-        """
-
-        params = {'duration': duration,
-                  'fromX': from_x,
-                  'fromY': from_y,
-                  'toX': to_x,
-                  'toY': to_y}
-        statement = f'\nSwiping from {from_x}, {from_y} to {to_x}, {to_y}.'
-        print(statement)
-        return self.driver.execute_script('mobile: dragFromToForDuration', params), print('Swiped\n')
-
-    def swipe_right_xcuit(self):
-        swipe_start = self.left_border + 1
-        swipe_stop = self.right_border
-        swipe_height = self.height * 0.5
-        return self.swipe_xcuit(duration=1.0,
-                                from_x=swipe_start,
-                                from_y=swipe_height,
-                                to_x=swipe_stop,
-                                to_y=swipe_height)
-
-    def long_swipe_left_xcuit(self):
-        swipe_start = self.right_border - 1
-        swipe_stop = self.left_border
-        swipe_height = self.height * 0.5
-        return self.swipe_xcuit(duration=1.0,
-                                from_x=swipe_start,
-                                from_y=swipe_height,
-                                to_x=swipe_stop,
-                                to_y=swipe_height)
-
-    def long_swipe_up_xcuit(self):
-        swipe_start = self.bottom_border * 0.98
-        swipe_stop = self.upper_border
-        swipe_width = self.width * 0.5
-        return self.swipe_xcuit(duration=1.0,
-                                from_x=swipe_width,
-                                from_y=swipe_start,
-                                to_x=swipe_width,
-                                to_y=swipe_stop)
-
-    def long_swipe_up_with_control_center_xcuit(self):
-
-        """Doesn't work yet"""
-
-        return self.swipe_xcuit(duration=1.0,
-                                from_x=180.0,
-                                from_y=667.0,
-                                to_x=180.0,
-                                to_y=1.0)
-
-    def long_swipe_down_xcuit(self):
-        swipe_start = self.upper_border * 0.37
-        swipe_stop = self.bottom_border
-        swipe_width = self.width * 0.5
-        return self.swipe_xcuit(duration=1.0,
-                                from_x=swipe_width,
-                                from_y=swipe_start,
-                                to_x=swipe_width,
-                                to_y=swipe_stop)
-
-    def long_swipe_down_with_menu_bar_xcuit(self):
-        swipe_start = self.upper_border
-        swipe_stop = self.bottom_border
-        swipe_width = self.width * 0.5
-        return self.swipe_xcuit(duration=1.0,
-                                from_x=swipe_width,
-                                from_y=swipe_start,
-                                to_x=swipe_width,
-                                to_y=swipe_stop)
-
-    """Swipes - UIAutomator 2 driver"""
-
-    def _swipe_wda(self, from_x: float or int, from_y: float or int,
-                   to_x: float or int, to_y: float or int, wait: bool = False):
-
-        """
-        It may contain waits after
-        every action, because sometimes Appium read chain of actions separately instead as a action chain.
-        WebDriver method, could be used in iOS and Android app
-        """
-        if wait:
-            duration_of_press = 500
-            swipe = TouchAction(driver=self.driver).long_press(el=None, x=from_x, y=from_y, duration=duration_of_press) \
-                .wait(500) \
-                .move_to(el=None, x=to_x, y=to_y) \
-                .wait(500) \
-                .release()
-        else:
-            swipe = TouchAction(driver=self.driver).press(el=None, x=from_x, y=from_y) \
-                .move_to(el=None, x=to_x, y=to_y) \
-                .release()
-        statement = f'\nSwiping from {from_x}, {from_y} to {to_x}, {to_y}.'
-        print(statement)
-        return swipe.perform()
+    """Swipes - both drivers method"""
 
     def _get_swipe_coordinates(self, direction: str = 'up' or 'down' or 'right' or 'left', with_menu: bool = False):
         y_start = 0
@@ -361,6 +238,79 @@ class BasePage(object):
                        'to_y': y_stop}
 
         return coordinates
+
+    """Swipes - XCUIT driver"""
+
+    def _flick_xcuit(self, direction: str):
+
+        """
+        This method simulates short movement of finger (flick)
+        XCUITest core method - use when developing iOS app
+        """
+
+        self.driver.execute_script('mobile: swipe', {'direction': direction})
+        statement = f'\nSwiped {direction} shortly'
+        return print(statement)
+
+    def flick_to_xcuit(self, direction: str = 'left' or 'right' or 'up' or 'down'):
+        if direction == 'left':
+            self._flick_xcuit('left')
+        elif direction == 'right':
+            self._flick_xcuit('right')
+        elif direction == 'up':
+            self._flick_xcuit('up')
+        elif direction == 'down':
+            self._flick_xcuit('down')
+
+    def _swipe_xcuit(self, duration: float or int, from_x: float or int,
+                     from_y: float or int, to_x: float or int, to_y: float or int):
+
+        """
+        This method simulates long move (drag) of the finger
+        XCUITest core method - use when developing iOS app
+        """
+
+        params = {'duration': duration,
+                  'fromX': from_x,
+                  'fromY': from_y,
+                  'toX': to_x,
+                  'toY': to_y}
+        statement = f'\nSwiping from {from_x}, {from_y} to {to_x}, {to_y}.'
+        print(statement)
+        return self.driver.execute_script('mobile: dragFromToForDuration', params), print('Swiped\n')
+
+    def swipe_to_xcuit(self, direction: str = 'up' or 'down' or 'right' or 'left', with_menu: bool = False):
+        coordinates = self._get_swipe_coordinates(direction=direction, with_menu=with_menu)
+        return self._swipe_xcuit(duration=1.0,
+                                 from_x=coordinates['from_x'],
+                                 to_x=coordinates['to_x'],
+                                 from_y=coordinates['from_y'],
+                                 to_y=coordinates['to_y'])
+
+    """Swipes - UIAutomator 2 driver"""
+
+    def _swipe_wda(self, from_x: float or int, from_y: float or int,
+                   to_x: float or int, to_y: float or int, wait: bool = False):
+
+        """
+        It may contain waits after
+        every action, because sometimes Appium read chain of actions separately instead as a action chain.
+        WebDriver method, could be used in iOS and Android app
+        """
+        if wait:
+            duration_of_press = 500
+            swipe = TouchAction(driver=self.driver).long_press(el=None, x=from_x, y=from_y, duration=duration_of_press) \
+                .wait(500) \
+                .move_to(el=None, x=to_x, y=to_y) \
+                .wait(500) \
+                .release()
+        else:
+            swipe = TouchAction(driver=self.driver).press(el=None, x=from_x, y=from_y) \
+                .move_to(el=None, x=to_x, y=to_y) \
+                .release()
+        statement = f'\nSwiping from {from_x}, {from_y} to {to_x}, {to_y}.'
+        print(statement)
+        return swipe.perform()
 
     def swipe_to_wda(self, direction: str = 'up' or 'down' or 'right' or 'left', with_menu: bool = False,
                      wait: bool = False):
