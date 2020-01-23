@@ -1,6 +1,6 @@
 # Mobile Automation Framework
 
-This framework is designed for all VD's QA who have possibility to write
+This framework is designed for all QAs who have possibility to write
 automatic tests for mobile devices or emulator. It has some functions like:
 
 ``-tap``
